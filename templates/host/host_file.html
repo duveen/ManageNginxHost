@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+{% block title %}HOME{% endblock %}
+{% block head %}
+    <style>
+        body {
+            background-color: #f5f7fb;
+        }
+    </style>
+{% endblock %}
+{% block content %}
+    <div class="card mb-3">
+        <div class="card-header">
+            <h1 class="card-title">HOST CONTENT</h1>
+            <div class="card-options"></div>
+        </div>
+        <div class="card-body">
+            <div>
+                <label class="form-label">File Content</label>
+                <textarea class="form-control" title="file_content" data-toggle="autosize"
+                          style="overflow: hidden; overflow-wrap: break-word; resize: none">{{ host_content }}</textarea>
+            </div>
+        </div>
+        <div class="card-footer text-right">
+            <button class="btn btn-primary">저장</button>
+            <button class="btn btn-gray">취소</button>
+        </div>
+    </div>
+    <script>
+        (function () {
+            const elements = document.querySelectorAll('[data-toggle="autosize"]');
+            if (elements.length) {
+                elements.forEach(function (element) {
+                    autosize(element);
+                });
+            }
+        })();
+    </script>
+{% endblock %}

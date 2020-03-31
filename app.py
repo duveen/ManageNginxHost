@@ -12,10 +12,12 @@ config = Configuration()
 config.load_file('/home/flask/manage_nginx_nost/config.json')
 
 
+# config.load_file('C:/flask/config.json')
+
+
 @app.route('/')
 def home():
-    if 'member' not in session:
-        return redirect(url_for('login_view'))
+    check_member()
 
     body = render_template('index.html')
     return body
@@ -55,13 +57,39 @@ def logout():
     return redirect(url_for('login_view'))
 
 
-@app.route('/hosts')
+@app.route('/host')
 def host_list():
+    check_member()
+    files = scan_files(config.base_dir)
+    return render_template('host/host_list.html', len=len(files), files=files)
+
+
+@app.route('/host/<path:host_file>')
+def host_file_detail(host_file):
+    check_member()
+    path = os.path.abspath(config.base_dir) + "/" + host_file
+
+    if os.path.isdir(path):
+        files = scan_files(path)
+        return render_template('host/host_list.html', len=len(files), files=files)
+
+    with open(path, 'r', encoding="UTF8") as host_file:
+        try:
+            host_content = host_file.read(os.path.getsize(path))
+        except UnicodeDecodeError:
+            return get_error_msg("This file cannot be read.")
+
+    return render_template('host/host_file.html', host_content=host_content)
+
+
+def check_member():
     if 'member' not in session:
         return redirect(url_for('login_view'))
 
+
+def scan_files(base_dir):
     files = []
-    for file in os.scandir(config.base_dir):
+    for file in os.scandir(base_dir):
         stat = file.stat()
 
         file_info = {'init': ''}
@@ -73,7 +101,7 @@ def host_list():
 
         files.append(file_info)
 
-    return render_template('host/list.html', len=len(files), files=files)
+    return files
 
 
 def convert_date(timestamp):

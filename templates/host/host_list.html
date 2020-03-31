@@ -28,7 +28,7 @@
                 </thead>
                 <tbody>
                 {% for index in range(0, len) %}
-                    <tr>
+                    <tr class="cursor-pointer" onclick="click_items('{{ files[index]['name'] }}')">
                         <td class="text-center">{{ len - index }}</td>
                         <td>{{ files[index]['name'] }}</td>
                         <td class="text-right">{{ files[index]['size'] }} Bytes</td>
@@ -49,5 +49,9 @@
         });
 
         modifyDataTablesLocation($(document));
+
+        function click_items(item) {
+            location.href = "{{ request.url }}/" + item
+        }
     </script>
 {% endblock %}
