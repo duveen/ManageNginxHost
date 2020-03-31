@@ -10,8 +10,6 @@ app.secret_key = b"\xf5j:.T8\x1c\xd2\x9d72\xeb\x00'=D"
 
 config = Configuration()
 config.load_file('/home/flask/manage_nginx_nost/config.json')
-
-
 # config.load_file('C:/flask/config.json')
 
 
@@ -72,6 +70,7 @@ def host_file_detail(host_file):
     if 'member' not in session:
         return redirect(url_for('login_view'))
 
+    host_file_str = host_file
     path = os.path.abspath(config.base_dir) + "/" + host_file
 
     if os.path.isdir(path):
@@ -84,7 +83,28 @@ def host_file_detail(host_file):
         except UnicodeDecodeError:
             return get_error_msg("This file cannot be read.")
 
-    return render_template('host/host_file.html', host_content=host_content)
+    return render_template('host/host_file.html', host_file=host_file_str, host_content=host_content)
+
+
+@app.route('/host/<path:host_file>', methods=['POST'])
+def host_file_save(host_file):
+    if 'member' not in session:
+        return redirect(url_for('login_view'))
+
+    path = os.path.abspath(config.base_dir) + "/" + host_file
+    if os.path.isdir(path):
+        return get_error_msg('Not allowed modify directory!'), 400
+
+    host_content = str(request.form['host_content']).replace('\r\n', '\n')
+
+    os.rename(path, path + '.bak')
+
+    with open(path, 'x+', encoding="UTF8") as copy_file:
+        copy_file.write(host_content)
+
+    os.remove(path + '.bak')
+
+    return get_error_msg("Success Saved!"), 200
 
 
 def scan_files(base_dir):

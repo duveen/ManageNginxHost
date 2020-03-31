@@ -13,26 +13,23 @@
             <h1 class="card-title">HOST CONTENT</h1>
             <div class="card-options"></div>
         </div>
-        <div class="card-body">
-            <div>
-                <label class="form-label">File Content</label>
-                <textarea class="form-control" title="file_content" data-toggle="autosize"
-                          style="overflow: hidden; overflow-wrap: break-word; resize: none; font-family: D2Coding, sans-serif">{{ host_content }}</textarea>
+        <form action="{{ url_for('host_file_save', host_file=host_file) }}" method="post">
+            <div class="card-body">
+                <div>
+                    <label class="form-label">File Content</label>
+                    <textarea id="hostContent" class="form-control" title="file_content" name="host_content"
+                              style="font-family: D2Coding, sans-serif; height: 60vh">{{ host_content }}</textarea>
+                </div>
             </div>
-        </div>
-        <div class="card-footer text-right">
-            <button class="btn btn-primary">저장</button>
-            <button class="btn btn-gray">취소</button>
-        </div>
+            <div class="card-footer text-right">
+                <button id="btnSave" class="btn btn-primary">저장</button>
+                <button id="btnCancel" class="btn btn-gray">취소</button>
+            </div>
+        </form>
     </div>
     <script>
-        (function () {
-            const elements = document.querySelectorAll('[data-toggle="autosize"]');
-            if (elements.length) {
-                elements.forEach(function (element) {
-                    autosize(element);
-                });
-            }
-        })();
+        $("#btnCancel").click(function () {
+            history.back()
+        });
     </script>
 {% endblock %}
