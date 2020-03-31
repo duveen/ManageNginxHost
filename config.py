@@ -10,7 +10,8 @@ class Configuration:
         }
 
         try:
-            data = json.load(input_path)
+            with open(input_path) as json_file:
+                data = json.load(json_file)
         except FileNotFoundError:
             with open(input_path, 'w+') as file:
                 json.dump(data, file)
