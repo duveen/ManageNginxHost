@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% block title %}LOGIN{% endblock %}
+{% block head %}
+    <style>
+        body {
+            background-color: #f5f7fb;
+        }
+    </style>
+{% endblock %}
+
+{% block body %}
+    <body class="antialiased d-flex flex-column vh-100">
+    <div class="flex-fill d-flex flex-column justify-content-center">
+        <div class="container-tight py-6">
+            <form class="card card-md" action="{{ url_for('login_action') }}" method="post">
+                <div class="card-header">
+                    <h1 class="card-title mx-auto">SNS Manage Nginx Host</h1>
+                </div>
+                <div class="card-body">
+                    <div class="mb-3">
+                        <label class="form-label">Email address</label>
+                        <input type="email" class="form-control" name="email" placeholder="Enter email" title="Email">
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label">Password</label>
+                        <div class="input-group input-group-flat">
+                            <input type="password" class="form-control" name="password" title="Password"
+                                   placeholder="Password">
+                        </div>
+                    </div>
+                    <div class="form-footer">
+                        <button type="submit" class="btn btn-primary btn-block">Sign in</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    </body>
+{% endblock %}
