@@ -56,7 +56,7 @@ def host_list():
         return redirect(url_for('login_view'))
 
     files = []
-    for file in os.scandir('C:/BioData'):
+    for file in os.scandir('/etc/nginx/conf.d/'):
         stat = file.stat()
 
         file_info = {'init': ''}
