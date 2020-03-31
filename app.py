@@ -3,8 +3,13 @@ from datetime import datetime
 
 from flask import Flask, render_template, redirect, url_for, session, request
 
+from config import Configuration
+
 app = Flask(__name__)
 app.secret_key = b"\xf5j:.T8\x1c\xd2\x9d72\xeb\x00'=D"
+
+config = Configuration()
+config.load_file('/home/flask/manage_nginx_nost/config.json')
 
 
 @app.route('/')
@@ -56,7 +61,7 @@ def host_list():
         return redirect(url_for('login_view'))
 
     files = []
-    for file in os.scandir('/etc/nginx/conf.d/'):
+    for file in os.scandir(config.base_dir):
         stat = file.stat()
 
         file_info = {'init': ''}
