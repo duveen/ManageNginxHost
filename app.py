@@ -17,7 +17,8 @@ config.load_file('/home/flask/manage_nginx_nost/config.json')
 
 @app.route('/')
 def home():
-    check_member()
+    if 'member' not in session:
+        return redirect(url_for('login_view'))
 
     body = render_template('index.html')
     return body
@@ -59,14 +60,18 @@ def logout():
 
 @app.route('/host')
 def host_list():
-    check_member()
+    if 'member' not in session:
+        return redirect(url_for('login_view'))
+
     files = scan_files(config.base_dir)
     return render_template('host/host_list.html', len=len(files), files=files)
 
 
 @app.route('/host/<path:host_file>')
 def host_file_detail(host_file):
-    check_member()
+    if 'member' not in session:
+        return redirect(url_for('login_view'))
+
     path = os.path.abspath(config.base_dir) + "/" + host_file
 
     if os.path.isdir(path):
@@ -80,11 +85,6 @@ def host_file_detail(host_file):
             return get_error_msg("This file cannot be read.")
 
     return render_template('host/host_file.html', host_content=host_content)
-
-
-def check_member():
-    if 'member' not in session:
-        return redirect(url_for('login_view'))
 
 
 def scan_files(base_dir):
