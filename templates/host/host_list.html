@@ -1,57 +1,73 @@
 {% extends "base.html" %}
 {% block title %}HOME{% endblock %}
 {% block head %}
-    <style>
-        body {
-            background-color: #f5f7fb;
-        }
-    </style>
+<style>
+    body {
+        background-color: #f5f7fb;
+    }
+</style>
 {% endblock %}
 {% block content %}
-    <div class="card mb-3">
-        <div class="card-header">
-            <h1 class="card-title">HOST LIST</h1>
-            <div class="card-options">
-                <a href="#" class="btn btn-primary mr-auto" tabindex="-1">ADD HOST</a>
-            </div>
+<div class="card mb-3">
+    <div class="card-header">
+        <h1 class="card-title">HOST LIST</h1>
+        <div class="card-options">
+            <a href="#" class="btn btn-primary mr-auto" tabindex="-1">ADD HOST</a>
+            <a href="#" id="btnRestart" class="btn btn-primary mr-auto ml-2" tabindex="-1">RESTART NGINX</a>
+            <script>
+                $("#btnRestart").click(function () {
+                    $.ajax({
+                        url: "{{ url_for('restart_nginx') }}",
+                        method: "POST",
+                        dataType: "json",
+                        success: function () {
+                            alert("Success restart!")
+                        },
+                        error: function (err) {
+                            alert("Failed restart.")
+                        }
+                    })
+                });
+            </script>
         </div>
-        <div class="card-body border-bottom py-3 datatable-header"></div>
-        <div class="table-responsive">
-            <table id="hostTable" class="table card-table table-hover table-vcenter text-nowrap datatable">
-                <thead>
+    </div>
+    <div class="card-body border-bottom py-3 datatable-header"></div>
+    <div class="table-responsive">
+        <table id="hostTable" class="table card-table table-hover table-vcenter text-nowrap datatable">
+            <thead>
                 <tr>
                     <th class="text-center w-1">#</th>
                     <th>File Name</th>
                     <th class="text-right w-1">File Size</th>
                     <th class="text-center w-1">Last Modified</th>
                 </tr>
-                </thead>
-                <tbody>
+            </thead>
+            <tbody>
                 {% for index in range(0, len) %}
-                    <tr class="cursor-pointer" onclick="click_items('{{ files[index]['name'] }}')">
-                        <td class="text-center">{{ len - index }}</td>
-                        <td>{{ files[index]['name'] }}</td>
-                        <td class="text-right">{{ files[index]['size'] }} Bytes</td>
-                        <td class="text-center">{{ files[index]['modified'] }}</td>
-                    </tr>
+                <tr class="cursor-pointer" onclick="click_items('{{ files[index]['name'] }}')">
+                    <td class="text-center">{{ len - index }}</td>
+                    <td>{{ files[index]['name'] }}</td>
+                    <td class="text-right">{{ files[index]['size'] }} Bytes</td>
+                    <td class="text-center">{{ files[index]['modified'] }}</td>
+                </tr>
                 {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        <div class="card-footer d-flex align-items-center datatable-footer"></div>
+            </tbody>
+        </table>
     </div>
-    <script>
-        let order = [0, "desc"];
+    <div class="card-footer d-flex align-items-center datatable-footer"></div>
+</div>
+<script>
+    let order = [0, "desc"];
 
-        $("#hostTable").DataTable({
-            "info": false,
-            "order": [order]
-        });
+    $("#hostTable").DataTable({
+        "info": false,
+        "order": [order]
+    });
 
-        modifyDataTablesLocation($(document));
+    modifyDataTablesLocation($(document));
 
-        function click_items(item) {
-            location.href = "{{ request.url }}/" + item
-        }
-    </script>
+    function click_items(item) {
+        location.href = "{{ request.url }}/" + item
+    }
+</script>
 {% endblock %}

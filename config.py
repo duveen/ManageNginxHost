@@ -2,7 +2,7 @@ import json
 
 
 class Configuration:
-    base_dir = '/etc/nginx/conf.d/'
+    base_dir = '/'
 
     def load_data(self, data):
         self.base_dir = data['base_dir']
@@ -17,5 +17,5 @@ class Configuration:
                 data = json.load(json_file)
                 self.load_data(data)
         except FileNotFoundError:
-            with open(input_path, 'w+') as file:
+            with open(input_path, 'x') as file:
                 json.dump(data, file)

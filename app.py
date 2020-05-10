@@ -9,7 +9,7 @@ app = Flask(__name__)
 app.secret_key = b"\xf5j:.T8\x1c\xd2\x9d72\xeb\x00'=D"
 
 config = Configuration()
-config.load_file('/home/flask/manage_nginx_nost/config.json')
+config.load_file('/home/flask/manage_nginx_host/config.json')
 # config.load_file('C:/flask/config.json')
 
 
@@ -37,9 +37,9 @@ def login_action():
         if valid_login(request.form['email'], request.form['password']):
             return redirect(url_for('home'))
         else:
-            return get_error_msg('Invalid Email/Password'), 400
+            return get_message('Invalid Email/Password'), 400
     except KeyError:
-        return get_error_msg('Invalid Email/Password'), 500
+        return get_message('Invalid Email/Password'), 500
 
 
 def valid_login(email, password):
@@ -54,6 +54,19 @@ def valid_login(email, password):
 def logout():
     session.pop('member')
     return redirect(url_for('login_view'))
+
+
+@app.route('/restartNginx', methods=['POST'])
+def restart_nginx():
+    if 'member' not in session:
+        return redirect(url_for('login_view'))
+
+    resCode = os.system('systemctl restart nginx')
+    
+    if resCode == 256:
+        return {'result': "Failed"}, 500
+
+    return {'result': "Success"}, 200
 
 
 @app.route('/host')
@@ -81,7 +94,7 @@ def host_file_detail(host_file):
         try:
             host_content = host_file.read(os.path.getsize(path))
         except UnicodeDecodeError:
-            return get_error_msg("This file cannot be read.")
+            return get_message("This file cannot be read.")
 
     return render_template('host/host_file.html', host_file=host_file_str, host_content=host_content)
 
@@ -93,7 +106,7 @@ def host_file_save(host_file):
 
     path = os.path.abspath(config.base_dir) + "/" + host_file
     if os.path.isdir(path):
-        return get_error_msg('Not allowed modify directory!'), 400
+        return get_message('Not allowed modify directory!'), 400
 
     host_content = str(request.form['host_content']).replace('\r\n', '\n')
 
@@ -104,7 +117,7 @@ def host_file_save(host_file):
 
     os.remove(path + '.bak')
 
-    return get_error_msg("Success Saved!"), 200
+    return get_message("Success Saved!"), 200
 
 
 def scan_files(base_dir):
@@ -130,7 +143,7 @@ def convert_date(timestamp):
     return formated_date
 
 
-def get_error_msg(msg):
+def get_message(msg):
     return '''<script>
     alert("''' + msg + '''");
     history.back();
